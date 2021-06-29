@@ -6,6 +6,7 @@
 #include "library/BlackBox_LDC.hpp"
 #include "library/BlackBox_Touchpad.hpp"
 #include "library/BlackBox_Power.hpp"
+#include "library/BlackBox_Door.hpp"
 #include <esp_log.h>
 #include <iostream>
 
@@ -41,6 +42,9 @@ void app_main()
     Touchpad touchpad(16, 0b1110, 1, 1, 1, 1);
 
     touchpad.init(&ldc);
+
+    Door door(Pins::Doors::DoorPins[0]);
+    door.init();
 
     cout << "-----------------------------------------------------" << endl;
     cout << "acc_x\t"
@@ -86,6 +90,11 @@ void app_main()
         ring.clear();
         ring.drawArc(Rgb(255,255,255), ((counter % 120) - (counter % 60)) ? (counter % 60) : 0, ((counter % 120) - (counter % 60)) ? - 1 : (counter % 60), ArcType::Clockwise);
         ring.show();
+
+        if ((counter % 1000) < (counter % 2000))
+            door.lock();
+        else
+            door.unlock();
 
         counter++;
 
